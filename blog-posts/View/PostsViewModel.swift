@@ -26,19 +26,22 @@ final class PostsViewModel: ObservableObject {
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
             .filter { !$0.isEmpty }
             .removeDuplicates()
-            .sink { self.getPosts(with: $0) }
+            .sink { query in
+                Task {
+                    await self.getPosts(with: query)
+                }
+            }
             .store(in: &subscriptions)
     }
      
-    private func getPosts(with query: String) {
-         state = .loading
-        Task {
-            do {
-                let posts = try await postsProvider.getPosts(with: query)
-                state = .loaded(posts)
-            } catch {
-                state = .error(error)
-            }
+    @MainActor
+    private func getPosts(with query: String) async {
+        state = .loading
+        do {
+            let posts = try await postsProvider.getPosts(with: query)
+            state = .loaded(posts)
+        } catch {
+            state = .error(error)
         }
     }
     

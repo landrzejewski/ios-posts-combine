@@ -22,10 +22,12 @@ final class HttpPostsProvider: PostsProvider {
     
     func getPosts(with query: String) async throws -> [Post] {
         do {
-            async let postDtos: [PostDto] = get(url: URL(string: "\(baseUrl)/posts")!)
+            /*async let postDtos: [PostDto] = get(url: URL(string: "\(baseUrl)/posts")!)
             async let userDtos: [UserDto] = get(url: URL(string: "\(baseUrl)/users")!)
             let posts = try await postDtos
-            let users = try await userDtos
+            let users = try await userDtos*/
+            let posts: [PostDto] = try await get(url: URL(string: "\(baseUrl)/posts")!)
+            let users: [UserDto] = try await get(url: URL(string: "\(baseUrl)/users")!)
             return posts.compactMap { post in
                 guard let user = users.first(where: { $0.id == post.userId }) else {
                     return nil
