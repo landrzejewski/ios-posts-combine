@@ -32,15 +32,14 @@ final class PostsViewModel: ObservableObject {
     
     private func getPosts(with query: String) {
         state = .loading
-        postsProvider.getPosts(with: query)
-            .sink { complition in
-                if case .failure(let error) = complition {
-                    self.state = .error(error)
-                }
-            } receiveValue: { posts in
-                self.state = .loaded(posts)
+        Task {
+            do {
+                let posts = try await postsProvider.getPosts(with: query)
+                state = .loaded(posts)
+            } catch {
+                state = .error(error)
             }
-            .store(in: &subscriptions)
+        }
     }
     
 }

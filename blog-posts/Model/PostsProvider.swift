@@ -10,6 +10,6 @@ import Combine
 
 protocol PostsProvider {
     
-    func getPosts(with query: String) -> AnyPublisher<[Post], PostsLoadingError>
+    func getPosts(with query: String) async throws -> [Post]
     
 }
