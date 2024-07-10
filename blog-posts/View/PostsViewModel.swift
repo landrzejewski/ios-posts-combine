@@ -29,9 +29,9 @@ final class PostsViewModel: ObservableObject {
             .sink { self.getPosts(with: $0) }
             .store(in: &subscriptions)
     }
-    
+     
     private func getPosts(with query: String) {
-        state = .loading
+         state = .loading
         Task {
             do {
                 let posts = try await postsProvider.getPosts(with: query)
